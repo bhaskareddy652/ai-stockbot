@@ -51,20 +51,35 @@ AI StockBot is an intelligent conversational assistant that delivers **real-time
 ## 📂 Project Structure
 
 ai-stockbot/
+
 ├── app/
+
 │ ├── init.py
+
 │ ├── analyzer.py # Handles voice input, extraction logic
+
 │ ├── config.py # API keys, Redis, env
+
 │ ├── models.py # Pydantic models
+
 │ ├── routes.py # FastAPI routes
+
 │ ├── utils.py # Stock fetchers, formatters, helpers
+
 │ ├── intent_router.py # Custom intent classification & fallback
+
 ├── static/
+
 │ └── index.html # Frontend UI
+
 ├── main.py # FastAPI app entrypoint
+
 ├── requirements.txt
+
 ├── README.md
+
 ├── .env.example
+
 └── .gitignore
 
 ---
