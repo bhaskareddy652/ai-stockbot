@@ -6,7 +6,7 @@ AI StockBot is an intelligent conversational assistant that delivers **real-time
 
 ## 📸 Preview
 
-![AI StockBot Screenshot](docs/interface-preview.png)
+![AI StockBot Screenshot](Docs/interface_preview.png)
 
 ---
 
