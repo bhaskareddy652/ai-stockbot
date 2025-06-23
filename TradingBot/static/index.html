@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI StockBot 💹</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #4361ee;
+    --secondary: #3f37c9;
+    --accent: #4895ef;
+    --dark: #212529;
+    --light: #f8f9fa;
+    --success: #4cc9f0;
+    --danger: #f72585;
+    --warning: #f8961e;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f0f2f5;
+    color: var(--dark);
+    line-height: 1.6;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  h1 {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  h1 span {
+    font-size: 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 5px 10px;
+    border-radius: 20px;
+  }
+
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding: 20px;
+    overflow: hidden;
+  }
+
+  #chat-box {
+    flex: 1;
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #chart-container {
+    flex: 1;
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    height: 100%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+
+  #tv-chart {
+    width: 100%;
+    height: 100%;
+  }
+
+  #input-area {
+    display: flex;
+    gap: 10px;
+    padding: 10px 20px;
+    background: #fff;
+    border-top: 1px solid #ddd;
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+  }
+
+  #user-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+
+  #send-btn {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0 20px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .message {
+    margin-bottom: 15px;
+    max-width: 80%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    line-height: 1.4;
+  }
+
+  .user-message {
+    align-self: flex-end;
+    background-color: var(--primary);
+    color: white;
+  }
+
+  .bot-message {
+    align-self: flex-start;
+    background-color: #edf2f7;
+  }
+
+  .sentiment {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 500;
+    margin-left: 8px;
+  }
+
+  .bullish {
+    background-color: #c6f6d5;
+    color: #22543d;
+  }
+
+  .bearish {
+    background-color: #fed7d7;
+    color: #742a2a;
+  }
+
+  .typing-indicator {
+    display: inline-block;
+    padding: 8px 12px;
+    background-color: #edf2f7;
+    border-radius: 12px;
+    margin-bottom: 15px;
+  }
+
+  .typing-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #a0aec0;
+    margin-right: 4px;
+    animation: typingAnimation 1.4s infinite both;
+  }
+
+  @keyframes typingAnimation {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-5px); }
+  }
+
+  @media (max-width: 768px) {
+    main {
+      flex-direction: column;
+    }
+
+    #chart-container {
+      height: 300px;
+    }
+
+    #input-area {
+      flex-direction: column;
+    }
+
+    #send-btn {
+      width: 100%;
+    }
+  }
+</style>
+
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>AI StockBot <span>Powered by Cohere</span></h1>
+    </div>
+  </header>
+  
+  <main>
+  <div id="chat-box"></div>
+
+  <div id="chart-container">
+    <div id="tv-chart"></div>
+  </div>
+</main>
+
+<div id="input-area">
+  <input type="text" id="user-input" placeholder="Ask about any stock (e.g. 'Why is TSLA dropping?')" autocomplete="off">
+  <button id="send-btn" onclick="sendMessage()">Send</button>
+</div>
+
+
+  <!-- TradingView Widget -->
+  <script src="https://s3.tradingview.com/tv.js"></script>
+  
+  <script>
+    // DOM Elements
+    const chatBox = document.getElementById('chat-box');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+    
+    // Initialize with default chart
+    document.addEventListener('DOMContentLoaded', function() {
+      showChart('NSE:RELIANCE');
+      
+      // Add welcome message
+      addBotMessage("Welcome to AI StockBot! 🚀\n\nAsk me about any stock (e.g. 'What's happening with NVDA?' or 'Why is AAPL down today?')");
+      
+      // Allow sending with Enter key
+      userInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          sendMessage();
+        }
+      });
+    });
+    
+    // Main function to send messages
+    async function sendMessage() {
+      const input = userInput.value.trim();
+      if (!input) return;
+      
+      // Add user message to chat
+      addUserMessage(input);
+      userInput.value = '';
+      
+      // Show typing indicator
+      const typingId = showTypingIndicator();
+      
+      try {
+        const response = await fetch('/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: input })
+        });
+        
+        const data = await response.json();
+        
+        // Remove typing indicator
+        removeTypingIndicator(typingId);
+        
+        if (data.response) {
+          // Process and display the response
+          let formattedResponse = data.response;
+          
+          // Highlight AI insights if present
+          if (formattedResponse.includes('AI Insight:')) {
+            const parts = formattedResponse.split('AI Insight:');
+            formattedResponse = parts[0] + 
+              `<div class="ai-insight">${parts[1].trim()}</div>`;
+          }
+          
+          // Add sentiment indicator if available
+          if (data.sentiment) {
+            formattedResponse += ` <span class="sentiment ${data.sentiment}">${data.sentiment.toUpperCase()}</span>`;
+          }
+          
+          addBotMessage(formattedResponse);
+          
+          // Show chart if symbol is available
+          if (data.symbol) {
+            showChart(data.symbol);
+          }
+        } else {
+          addBotMessage("I couldn't process your request. Please try again.");
+        }
+      } catch (err) {
+        console.error('Error:', err);
+        removeTypingIndicator(typingId);
+        addBotMessage("Sorry, I'm having trouble connecting. Please try again later.");
+      }
+    }
+    
+    // Function to display TradingView chart
+    function showChart(tvSymbol) {
+      const container = document.getElementById('tv-chart');
+      container.innerHTML = ''; // Clear previous chart
+      
+      new TradingView.widget({
+        container_id: 'tv-chart',
+        symbol: tvSymbol,
+        interval: 'D',
+        timezone: 'Asia/Kolkata',
+        theme: 'light',
+        style: '1',
+        locale: 'en',
+        toolbar_bg: '#f1f3f6',
+        enable_publishing: false,
+        hide_top_toolbar: false,
+        hide_side_toolbar: false,
+        allow_symbol_change: true,
+        details: true,
+        hotlist: true,
+        calendar: true,
+        width: "100%",
+        height: "100%"
+      });
+    }
+    
+    // Helper functions for chat messages
+    function addUserMessage(text) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message user-message';
+      messageDiv.innerHTML = text;
+      chatBox.appendChild(messageDiv);
+      scrollToBottom();
+    }
+    
+    function addBotMessage(text) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message bot-message';
+      messageDiv.innerHTML = text.replace(/\n/g, '<br>');
+      chatBox.appendChild(messageDiv);
+      scrollToBottom();
+    }
+    
+    function showTypingIndicator() {
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'typing-indicator';
+      typingDiv.id = 'typing-indicator';
+      typingDiv.innerHTML = `
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      `;
+      chatBox.appendChild(typingDiv);
+      scrollToBottom();
+      return typingDiv.id;
+    }
+    
+    function removeTypingIndicator(id) {
+      const typingElement = document.getElementById(id);
+      if (typingElement) {
+        typingElement.remove();
+      }
+    }
+    
+    function scrollToBottom() {
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+    
+    // Optional: Add button to analyze current stock
+    function addAnalyzeButton(symbol) {
+      const analyzeBtn = document.createElement('button');
+      analyzeBtn.textContent = '📊 Get Full Analysis';
+      analyzeBtn.style.marginTop = '10px';
+      analyzeBtn.onclick = () => analyzeStock(symbol);
+      chatBox.appendChild(analyzeBtn);
+    }
+    
+    // Function for deep analysis
+    async function analyzeStock(symbol) {
+      const typingId = showTypingIndicator();
+      
+      try {
+        const response = await fetch(`/analyze/${symbol}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const data = await response.json();
+        removeTypingIndicator(typingId);
+        
+        if (data.error) {
+          addBotMessage(data.error);
+          return;
+        }
+        
+        let analysisMessage = `
+          <strong>${data.symbol} Analysis Report</strong><br><br>
+          <strong>📰 News Summary:</strong> ${data.news_summary}<br><br>
+          <strong>📊 Market Sentiment:</strong> <span class="sentiment ${data.sentiment.sentiment}">
+            ${data.sentiment.sentiment.toUpperCase()} (${Math.round(data.sentiment.confidence * 100)}% confidence)
+          </span><br><br>
+          <strong>💱 Price Data:</strong><br>
+          • Current: $${data.price_data.price.toFixed(2)}<br>
+          • Change: ${data.price_data.change_percent}<br>
+          • Previous Close: $${data.price_data.prev_close.toFixed(2)}
+        `;
+        
+        addBotMessage(analysisMessage);
+      } catch (err) {
+        console.error('Analysis error:', err);
+        removeTypingIndicator(typingId);
+        addBotMessage("Couldn't complete deep analysis. Please try again.");
+      }
+    }
+  </script>
+</body>
+</html>
