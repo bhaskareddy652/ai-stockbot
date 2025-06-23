@@ -101,3 +101,40 @@ pip install -r requirements.txt
 
 # Add your Cohere and Alpha Vantage keys to `.env`
 cp .env.example .env
+
+## Run the App
+
+uvicorn main:app --reload
+
+Then open static/index.html in your browser
+
+## Powered By
+- 🧠 Cohere – Natural language generation & classification
+
+- 📈 TradingView – Stock charting widgets
+
+- 📊 Yahoo Finance (via yfinance) – Real-time market data
+
+- 📚 FastAPI – High-performance Python API
+
+## Disclaimer
+
+AI StockBot provides general financial information and does not constitute investment advice. Always consult with a financial advisor before making investment decisions.
+
+
+## Acknowledgements
+
+Special thanks to:
+
+Cohere for enabling powerful language understanding.
+
+Yahoo Finance & TradingView for reliable stock market data.
+
+
+
+### ✅ Tip:
+
+You can also add a `docs/interface-preview.png` screenshot (like the one you shared) and update the `README.md` to show the image.
+
+Would you like me to also generate a `.env.example` or Dockerfile for deployment on Render or similar platforms?
+
