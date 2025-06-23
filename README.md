@@ -117,8 +117,11 @@ Then open static/index.html in your browser
 
 - 📚 FastAPI – High-performance Python API
 
+
 ## Disclaimer
+
 AI StockBot provides general financial information and does not constitute investment advice. Always consult with a financial advisor before making investment decisions.
+
 
 ## Acknowledgements
 
@@ -127,6 +130,8 @@ Special thanks to:
 Cohere for enabling powerful language understanding.
 
 Yahoo Finance & TradingView for reliable stock market data.
+
+
 
 ### ✅ Tip:
 
