@@ -118,23 +118,3 @@ Then open static/index.html in your browser
 - 📚 FastAPI – High-performance Python API
 
 
-## Disclaimer
-
-AI StockBot provides general financial information and does not constitute investment advice. Always consult with a financial advisor before making investment decisions.
-
-
-## Acknowledgements
-
-Special thanks to:
-
-Cohere for enabling powerful language understanding.
-
-Yahoo Finance & TradingView for reliable stock market data.
-
-
-
-### ✅ Tip:
-
-You can also add a `docs/interface-preview.png` screenshot (like the one you shared) and update the `README.md` to show the image.
-
-Would you like me to also generate a `.env.example` or Dockerfile for deployment on Render or similar platforms?
