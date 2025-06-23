@@ -101,20 +101,3 @@ pip install -r requirements.txt
 
 # Add your Cohere and Alpha Vantage keys to `.env`
 cp .env.example .env
-
-## Run the App
-
-uvicorn main:app --reload
-
-Then open static/index.html in your browser
-
-## Powered By
-- 🧠 Cohere – Natural language generation & classification
-
-- 📈 TradingView – Stock charting widgets
-
-- 📊 Yahoo Finance (via yfinance) – Real-time market data
-
-- 📚 FastAPI – High-performance Python API
-
-
