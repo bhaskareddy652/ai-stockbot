@@ -88,7 +88,7 @@ ai-stockbot/
 
 ### 🔧 Local Setup
 
-```bash
+
 git clone https://github.com/yourusername/ai-stockbot.git
 cd ai-stockbot
 
