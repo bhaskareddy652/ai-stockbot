@@ -126,9 +126,9 @@ AI StockBot provides general financial information and does not constitute inves
 
 Special thanks to:
 
-Cohere for enabling powerful language understanding.
+- Cohere for enabling powerful language understanding.
 
-Yahoo Finance & TradingView for reliable stock market data.
+- Yahoo Finance & TradingView for reliable stock market data.
 
 
 
